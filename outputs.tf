@@ -1,47 +1,13 @@
-###
-# compute.tf outputs
-###
+## Copyright © 2020, Oracle and/or its affiliates. 
+## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
-output "instance_id" {
-  value = oci_core_instance.simple-vm.id
+output "adb_database" {
+  value = {
+    adb_database_id    = oci_database_autonomous_database.adb_database.id
+    adb_wallet_content = oci_database_autonomous_database_wallet.adb_database_wallet.content
+    adb_nsg_id         = (!var.use_existing_vcn && var.adb_private_endpoint) ? oci_core_network_security_group.adb_nsg[0].id : var.adb_nsg_id
+  }
 }
 
-output "instance_public_ip" {
-  value = oci_core_instance.simple-vm.public_ip
-}
 
-output "instance_private_ip" {
-  value = oci_core_instance.simple-vm.private_ip
-}
 
-output "instance_https_url" {
-  value = (local.is_public_subnet ? "https://${oci_core_instance.simple-vm.public_ip}" : "https://${oci_core_instance.simple-vm.private_ip}")
-}
-
-###
-# network.tf outputs
-###
-
-output "vcn_id" {
-  value = ! local.use_existing_network ? join("", oci_core_vcn.simple.*.id) : var.vcn_id
-}
-
-output "subnet_id" {
-  value = ! local.use_existing_network ? join("", oci_core_subnet.simple_subnet.*.id) : var.subnet_id
-}
-
-output "vcn_cidr_block" {
-  value = ! local.use_existing_network ? join("", oci_core_vcn.simple.*.cidr_block) : var.vcn_cidr_block
-}
-
-output "nsg_id" {
-  value = join("", oci_core_network_security_group.simple_nsg.*.id)
-}
-
-###
-# image_subscription.tf outputs
-###
-
-output "subscription" {
-  value = data.oci_core_app_catalog_subscriptions.mp_image_subscription.*.app_catalog_subscriptions
-}

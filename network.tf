@@ -1,54 +1,92 @@
-resource "oci_core_vcn" "simple" {
-  count          = local.use_existing_network ? 0 : 1
-  cidr_block     = var.vcn_cidr_block
-  dns_label      = substr(var.vcn_dns_label, 0, 15)
-  compartment_id = var.network_compartment_ocid
-  display_name   = var.vcn_display_name
+## Copyright © 2021, Oracle and/or its affiliates. 
+## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
-  freeform_tags = map(var.tag_key_name, var.tag_value)
+resource "oci_core_vcn" "adb_vcn" {
+  count          = (!var.use_existing_vcn && var.adb_private_endpoint) ? 1 : 0
+  cidr_block     = var.vcn_cidr
+  compartment_id = var.compartment_ocid
+  display_name   = "adb_vcn"
+  dns_label      = "adbvcn"
 }
 
-#IGW
-resource "oci_core_internet_gateway" "simple_internet_gateway" {
-  count          = local.use_existing_network ? 0 : 1
-  compartment_id = var.network_compartment_ocid
-  vcn_id         = oci_core_vcn.simple[count.index].id
-  enabled        = "true"
-  display_name   = "${var.vcn_display_name}-igw"
-
-  freeform_tags = map(var.tag_key_name, var.tag_value)
+resource "oci_core_service_gateway" "adb_sg" {
+  count          = (!var.use_existing_vcn && var.adb_private_endpoint) ? 1 : 0
+  compartment_id = var.compartment_ocid
+  display_name   = "adb_sg"
+  vcn_id         = oci_core_vcn.adb_vcn[0].id
+  services {
+    service_id = lookup(data.oci_core_services.AllOCIServices[0].services[0], "id")
+  }
 }
 
-#simple subnet
-resource "oci_core_subnet" "simple_subnet" {
-  count                      = local.use_existing_network ? 0 : 1
-  cidr_block                 = var.subnet_cidr_block
-  compartment_id             = var.network_compartment_ocid
-  vcn_id                     = oci_core_vcn.simple[count.index].id
-  display_name               = var.subnet_display_name
-  dns_label                  = substr(var.subnet_dns_label, 0, 15)
-  prohibit_public_ip_on_vnic = ! local.is_public_subnet
-
-  freeform_tags = map(var.tag_key_name, var.tag_value)
+resource "oci_core_nat_gateway" "adb_natgw" {
+  count          = (!var.use_existing_vcn && var.adb_private_endpoint) ? 1 : 0
+  compartment_id = var.compartment_ocid
+  display_name   = "adb_natgw"
+  vcn_id         = oci_core_vcn.adb_vcn[0].id
 }
 
-resource "oci_core_route_table" "simple_route_table" {
-  count          = local.use_existing_network ? 0 : 1
-  compartment_id = var.network_compartment_ocid
-  vcn_id         = oci_core_vcn.simple[count.index].id
-  display_name   = "${var.subnet_display_name}-rt"
+resource "oci_core_route_table" "adb_rt_via_natgw_and_sg" {
+  count          = (!var.use_existing_vcn && var.adb_private_endpoint) ? 1 : 0
+  compartment_id = var.compartment_ocid
+  vcn_id         = oci_core_vcn.adb_vcn[0].id
+  display_name   = "adb_rt_via_natgw"
 
   route_rules {
-    network_entity_id = oci_core_internet_gateway.simple_internet_gateway[count.index].id
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_nat_gateway.adb_natgw[0].id
   }
 
-  freeform_tags = map(var.tag_key_name, var.tag_value)
+  route_rules {
+    destination       = lookup(data.oci_core_services.AllOCIServices[0].services[0], "cidr_block")
+    destination_type  = "SERVICE_CIDR_BLOCK"
+    network_entity_id = oci_core_service_gateway.adb_sg[0].id
+  }
 }
 
-resource "oci_core_route_table_attachment" "route_table_attachment" {
-  count          = local.use_existing_network ? 0 : 1
-  subnet_id      = oci_core_subnet.simple_subnet[count.index].id
-  route_table_id = oci_core_route_table.simple_route_table[count.index].id
+resource "oci_core_network_security_group" "adb_nsg" {
+  count          = (!var.use_existing_vcn && var.adb_private_endpoint) ? 1 : 0
+  compartment_id = var.compartment_ocid
+  display_name   = "adb_nsg"
+  vcn_id         = oci_core_vcn.adb_vcn[0].id
 }
+
+resource "oci_core_network_security_group_security_rule" "adb_nsg_egress_group_sec_rule" {
+  count                     = (!var.use_existing_vcn && var.adb_private_endpoint) ? 1 : 0
+  network_security_group_id = oci_core_network_security_group.adb_nsg[0].id
+  direction                 = "EGRESS"
+  protocol                  = "6"
+  destination               = var.vcn_cidr
+  destination_type          = "CIDR_BLOCK"
+}
+
+resource "oci_core_network_security_group_security_rule" "adb_nsg_ingress_group_sec_rule" {
+  count                     = (!var.use_existing_vcn && var.adb_private_endpoint) ? 1 : 0
+  network_security_group_id = oci_core_network_security_group.adb_nsg[0].id
+  direction                 = "INGRESS"
+  protocol                  = "6"
+  source                    = var.vcn_cidr
+  source_type               = "CIDR_BLOCK"
+  tcp_options {
+    destination_port_range {
+      max = 1522
+      min = 1522
+    }
+  }
+}
+
+resource "oci_core_subnet" "adb_subnet" {
+  count                      = (!var.use_existing_vcn && var.adb_private_endpoint) ? 1 : 0
+  cidr_block                 = var.adb_subnet_cidr
+  compartment_id             = var.compartment_ocid
+  vcn_id                     = oci_core_vcn.adb_vcn[0].id
+  display_name               = "adb_subnet"
+  dns_label                  = "adbnet"
+  security_list_ids          = [oci_core_vcn.adb_vcn[0].default_security_list_id]
+  route_table_id             = oci_core_route_table.adb_rt_via_natgw_and_sg[0].id
+  prohibit_public_ip_on_vnic = true
+}
+
+
+
