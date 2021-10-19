@@ -18,7 +18,7 @@ Instead of figuring out the details of how to run a piece of infrastructure from
 ## How to use this Module
 Each Module has the following folder structure:
 * [root](): This folder contains a root module.
-* [examples](): This folder contains examples of how to use the module:
+* [examples](examples): This folder contains examples of how to use the module:
   - [Fully Private ADB + network deployed by module](examples/adb-fully-private-no-existing-network): This is an example of how to use the oci-adb module to deploy Autonomous Transation Processing Database (ATP) with Private Endpoint support with network cloud infrastrucutre elements deployed within the body of the module.
   - [Fully Private ADB + custom network injected into module](examples/adb-fully-private-use-existing-network): This is an example of how to use the oci-adb module to deploy Autonomous Data Warehouse Database (ADW) with Private Endpoint support but network cloud infrastrucutre elements will be injected into the module.
   - [Fully Public ADB](examples/adb-fully-public): This is an example of how to use the oci-adb module to deploy Autonomous JSON Database (AJD) without Private Endpoint support (exposed to the public Internet).
