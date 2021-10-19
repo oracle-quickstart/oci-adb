@@ -21,7 +21,7 @@ Each Module has the following folder structure:
 * [examples](): This folder contains examples of how to use the module:
   - [Fully Private ADB + network deployed by module](examples/adb-fully-private-no-existing-network): This is an example of how to use the oci-adb module to deploy Autonomous Database with Private Endpoint support with network cloud infrastrucutre elements deployed within the body of the module.
   - [Fully Private ADB + custom network injected into module](examples/adb-fully-private-use-existing-network): This is an example of how to use the oci-adb module to deploy Autonomous Database with Private Endpoint support but network cloud infrastrucutre elements will be injected into the module.
-  - [Fully Private ADB + custom network injected into module](examples/adb-fully-public): This is an example of how to use the oci-adb module to deploy Autonomous Database without Private Endpoint support (exposed to public Internet).
+  - [Fully Private ADB + custom network injected into module](examples/adb-fully-public): This is an example of how to use the oci-adb module to deploy Autonomous Database without Private Endpoint support (exposed to the public Internet).
 
 To deploy OKE using this Module with minimal effort use this:
 
@@ -32,7 +32,7 @@ module "oci-adb" {
   adb_password              = var.adb_password
   adb_database_db_workload  = var.adb_database_db_workload
   use_existing_vcn          = true
-  vcn                       = var.vcn_id}
+  vcn                       = var.vcn_id
   adb_subnet_id             = var.adb_subnet_id
 }
 
