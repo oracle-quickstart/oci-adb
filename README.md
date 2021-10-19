@@ -16,7 +16,7 @@ A Module is a canonical, reusable, best-practices definition for how to run a si
 Instead of figuring out the details of how to run a piece of infrastructure from scratch, you can reuse existing code that has been proven in production. And instead of maintaining all that infrastructure code yourself, you can leverage the work of the Module community to pick up infrastructure improvements through a version number bump.
 
 ## How to use this Module
-Each Module has the following folder structure:
+This Module has the following folder structure:
 * [root](): This folder contains a root module.
 * [examples](examples): This folder contains examples of how to use the module:
   - [Fully Private ADB + network deployed by module](examples/adb-fully-private-no-existing-network): This is an example of how to use the oci-adb module to deploy Autonomous Transation Processing Database (ATP) with Private Endpoint support with network cloud infrastrucutre elements deployed within the body of the module.
