@@ -19,9 +19,9 @@ Instead of figuring out the details of how to run a piece of infrastructure from
 Each Module has the following folder structure:
 * [root](): This folder contains a root module.
 * [examples](): This folder contains examples of how to use the module:
-  - [Fully Private ADB + network deployed by module](examples/adb-fully-private-no-existing-network): This is an example of how to use the oci-adb module to deploy Autonomous Database with Private Endpoint support with network cloud infrastrucutre elements deployed within the body of the module.
-  - [Fully Private ADB + custom network injected into module](examples/adb-fully-private-use-existing-network): This is an example of how to use the oci-adb module to deploy Autonomous Database with Private Endpoint support but network cloud infrastrucutre elements will be injected into the module.
-  - [Fully Private ADB + custom network injected into module](examples/adb-fully-public): This is an example of how to use the oci-adb module to deploy Autonomous Database without Private Endpoint support (exposed to the public Internet).
+  - [Fully Private ADB + network deployed by module](examples/adb-fully-private-no-existing-network): This is an example of how to use the oci-adb module to deploy Autonomous Transation Processing (ATP) Database with Private Endpoint support with network cloud infrastrucutre elements deployed within the body of the module.
+  - [Fully Private ADB + custom network injected into module](examples/adb-fully-private-use-existing-network): This is an example of how to use the oci-adb module to deploy Autonomous Data Warehouse (ADW) Database with Private Endpoint support but network cloud infrastrucutre elements will be injected into the module.
+  - [Fully Public ADB](examples/adb-fully-public): This is an example of how to use the oci-adb module to deploy  (Autonomous JSON Database) without Private Endpoint support (exposed to the public Internet).
 
 To deploy OKE using this Module with minimal effort use this:
 
