@@ -58,8 +58,8 @@ adb_database_data_storage_size_in_tbs | Define in terabytes what will be the siz
 adb_database_display_name | Define database display name of your Autonomous Database
 adb_database_db_name | Define database name of your Autonomous Database
 adb_database_db_version | Define version of your Autonomous Database
-adb_db_workload | Define workload type of your Autonomous Database
-adb_database_license_model | Define license model for your Autonomous Database
+adb_db_workload | Define workload type of your Autonomous Database - OLTP, DW, AJD, APEX
+adb_database_license_model | Define license model for your Autonomous Database - LICENSE_INCLUDED, BRING_YOUR_OWN_LICENSE
 adb_data_safe_status | Define the status of DataSafe for your Autonomous Database
 adb_database_defined_tags_value | Define your defined tags values associated with your Autonomous Database
 adb_database_freeform_tags | Define your freeform tags values associated with your Autonomous Database
