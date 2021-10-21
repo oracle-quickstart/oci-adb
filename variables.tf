@@ -101,3 +101,6 @@ variable "is_auto_scaling_enabled" {
   default = false
 }
 
+variable "defined_tags" {
+  default = {}
+}
