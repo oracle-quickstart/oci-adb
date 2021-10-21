@@ -7,6 +7,7 @@ resource "oci_core_vcn" "adb_vcn" {
   compartment_id = var.compartment_ocid
   display_name   = "adb_vcn"
   dns_label      = "adbvcn"
+  defined_tags   = var.defined_tags
 }
 
 resource "oci_core_service_gateway" "adb_sg" {
@@ -17,6 +18,7 @@ resource "oci_core_service_gateway" "adb_sg" {
   services {
     service_id = lookup(data.oci_core_services.AllOCIServices[0].services[0], "id")
   }
+  defined_tags = var.defined_tags
 }
 
 resource "oci_core_nat_gateway" "adb_natgw" {
@@ -24,6 +26,7 @@ resource "oci_core_nat_gateway" "adb_natgw" {
   compartment_id = var.compartment_ocid
   display_name   = "adb_natgw"
   vcn_id         = oci_core_vcn.adb_vcn[0].id
+  defined_tags   = var.defined_tags
 }
 
 resource "oci_core_route_table" "adb_rt_via_natgw_and_sg" {
@@ -31,6 +34,7 @@ resource "oci_core_route_table" "adb_rt_via_natgw_and_sg" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.adb_vcn[0].id
   display_name   = "adb_rt_via_natgw"
+  defined_tags   = var.defined_tags
 
   route_rules {
     destination       = "0.0.0.0/0"
@@ -50,6 +54,7 @@ resource "oci_core_network_security_group" "adb_nsg" {
   compartment_id = var.compartment_ocid
   display_name   = "adb_nsg"
   vcn_id         = oci_core_vcn.adb_vcn[0].id
+  defined_tags   = var.defined_tags
 }
 
 resource "oci_core_network_security_group_security_rule" "adb_nsg_egress_group_sec_rule" {
@@ -86,6 +91,7 @@ resource "oci_core_subnet" "adb_subnet" {
   security_list_ids          = [oci_core_vcn.adb_vcn[0].default_security_list_id]
   route_table_id             = oci_core_route_table.adb_rt_via_natgw_and_sg[0].id
   prohibit_public_ip_on_vnic = true
+  defined_tags               = var.defined_tags
 }
 
 
