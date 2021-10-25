@@ -101,6 +101,22 @@ variable "is_auto_scaling_enabled" {
   default = false
 }
 
+variable "adb_wallet_password_specials" {
+  default = true
+}
+
+variable "adb_wallet_password_length" {
+  default = 16
+}
+
+variable "adb_wallet_password_min_numeric" {
+  default = 2
+}
+
+variable "adb_wallet_password_override_special" {
+  default = ""
+}
+
 variable "defined_tags" {
   default = {}
 }
