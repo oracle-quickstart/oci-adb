@@ -29,8 +29,10 @@ resource "oci_database_autonomous_database" "adb_database" {
 }
 
 resource "random_password" "wallet_password" {
-  length  = 16
-  special = true
+  length           = var.adb_wallet_password_length
+  special          = var.adb_wallet_password_specials
+  min_numeric      = var.adb_wallet_password_min_numeric
+  override_special = var.adb_wallet_password_override_special
 }
 
 resource "oci_database_autonomous_database_wallet" "adb_database_wallet" {
