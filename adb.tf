@@ -26,6 +26,9 @@ resource "oci_database_autonomous_database" "adb_database" {
   private_endpoint_label   = var.adb_private_endpoint ? var.adb_private_endpoint_label : null
   subnet_id                = var.adb_private_endpoint ? local.adb_subnet_id : null
   defined_tags             = var.defined_tags
+  lifecycle {
+    ignore_changes = [defined_tags["Oracle-Tags.CreatedBy"], defined_tags["Oracle-Tags.CreatedOn"]]
+  }
 }
 
 resource "random_password" "wallet_password" {
